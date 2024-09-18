@@ -1,5 +1,4 @@
 import logging
-from venv import logger
 
 import requests
 from telegram import ReplyKeyboardMarkup
@@ -11,8 +10,7 @@ from bread_fast_bot.settings import get_settings
 settings = get_settings()
 kitchen_chat_id = ""
 
-bot = ExtBot(token=settings.token)
-updater = Updater(bot=bot)
+
 menu_url = 'https://practicumgrade.github.io/course-material/bakery-menu.json'
 logger = logging.getLogger(__name__)
 
@@ -76,6 +74,9 @@ def wake_up(update, context):
 
 
 if __name__ == '__main__':
+    bot = ExtBot(token=settings.token)
+    updater = Updater(bot=bot)
+
     updater.dispatcher.add_handler(CommandHandler('start', wake_up))
     updater.dispatcher.add_handler(CommandHandler('menu', show_menu))
     updater.dispatcher.add_handler(MessageHandler(Filters.text, process_order))
