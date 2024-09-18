@@ -17,6 +17,7 @@ dev-dependencies = [
     "pytest>=8.3.3",
     "ruff>=0.6.5",
 ]
+package = true
 
 [tool.setuptools]
 packages = ["bread_fast_bot"]
