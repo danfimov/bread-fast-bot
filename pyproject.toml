@@ -1,0 +1,45 @@
+[project]
+name = "bread_fast_bot"
+version = "0.1.0"
+description = "Bot for bread ordering"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic-settings>=2.5.2",
+    "pydantic>=2.9.2",
+    "python-telegram-bot==13.15",
+    "requests>=2.32.3",
+    "urllib3==1.26.5",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.3",
+    "ruff>=0.6.5",
+]
+package = true
+
+[tool.setuptools]
+packages = ["bread_fast_bot"]
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "W", "I"]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+
+[tool.pytest.ini_options]
+markers = [
+    "unit: marks unit tests",
+    "integration: marks tests with real infrastructure env",
+    "linting: marks tests as linter/static analyzers"
+]
+filterwarnings = [
+    "ignore:.*pkg_resources:DeprecationWarning",
+    "ignore:.*audioop:DeprecationWarning"
+]
