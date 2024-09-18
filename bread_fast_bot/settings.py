@@ -1,11 +1,10 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     token: str
 
-    class Config:
-        env_file = "conf/.env"
+    model_config = SettingsConfigDict(env_file="conf/.env")
 
 
 _settings: Settings | None = None

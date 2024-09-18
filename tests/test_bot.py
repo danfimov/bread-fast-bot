@@ -1,55 +1,48 @@
+from logging import Logger
 from unittest.mock import patch
 
+from bread_fast_bot import main
+
+
+try:
+    import requests
+except ImportError:
+    raise AssertionError('Модуль requests не установлен. Посмотрите в README, что нужно для этого сделать.')
 
 try:
     import telegram
     from telegram import Bot
+    from telegram.ext import Updater
 except ImportError:
     raise AssertionError('Модуль telegram не установлен. Посмотрите в README, что нужно для этого сделать.')
 
 try:
-    with patch.object(Bot, 'send_message'):
-        from bread_fast_bot import main
-except telegram.error.InvalidToken:
-    raise AssertionError('Убедитесь, что токен для класса Bot передан валидный.')
+    import dotenv
+except ImportError:
+    raise AssertionError('Модуль dotenv не установлен. Посмотрите в README, что нужно для этого сделать.')
 
 
-def test_import():
+@patch.object(requests, 'get', side_effect=requests.exceptions.ConnectionError)
+def test_exception_handling(get_mock):
     try:
-        main.Bot
-    except AttributeError:
-        raise AssertionError('Импортируйте класс Bot из модуля telegram.')
+        main.get_menu()
+    except requests.exceptions.ConnectionError:
+        raise AssertionError('Обработайте исключение от `requests.get при помощи try ... except')
 
 
-def test_bot():
+@patch.object(Bot, 'send_message')
+@patch.object(Updater, 'start_polling')
+@patch.object(Updater, 'idle')
+def test_main(idle_mock, start_polling_mock, send_message_mock):
     try:
-        assert isinstance(main.bot, telegram.Bot), "Переменная bot должна быть экземпляром класса Bot."
-    except AttributeError:
-        raise AssertionError('Убедитесь, что экземпляр класса Bot назван bot.')
+        idle_mock.assert_not_called()
+        start_polling_mock.assert_not_called()
+    except AssertionError:
+        raise AssertionError('Воспользуйтесь if __name__ == "__main__"')
 
+    test_exception_handling()
 
-def test_chat_id():
     try:
-        isinstance(main.chat_id, str), "Переменная chat_id должна быть строкой."
+        assert isinstance(main.logger, Logger)
     except AttributeError:
-        raise AssertionError('Убедитесь, что id получателя назван, как chat_id')
-
-
-def test_text():
-    try:
-        isinstance(main.text, str), "Переменная text должна быть строкой."
-    except AttributeError:
-        raise AssertionError('Убедитесь, что текст сообщения назван, как text')
-
-
-def test_send_message():
-    with patch.object(Bot, 'send_message'):
-        from importlib import reload
-        reload(main)
-        try:
-            main.bot.send_message.assert_called_once_with(
-                main.chat_id,
-                main.text,
-            )
-        except AssertionError:
-            raise AssertionError('Для отправки сообщения нужно вызвать send_message с аргументами chat_id и text.')
+        raise AssertionError('Проинициализируйте логгер. Убедитесь, что он называется logger')
